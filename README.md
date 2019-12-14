@@ -25,19 +25,20 @@ Each chunk of data starts with a version byte. If the first version bit is 1, th
 [80-FF]     [0xFFFF][variable]
 ```
 The following descriptors follow this format:
-| 0x | Descriptor | Length
+
+| 0x | Descriptor | Length |
 | --- | --- | --- |
-| 00 | padding | 1
-| 01 | sha256 | 32
-| 02 | schnorr | 64
-| 03 | compact schnorr (128) | 48
-| 04 | schema code (legendary) | 32
-| 05 | ipfs | 32
-| 80 | data (canonical json) | <3Kb
-| 81 | data (legendary) | <3Kb
-| 82 | inline schema (legendary) | <3Kb
-| 83 | url (utf8) | <3Kb
-| 84 | legendary schema url (utf8) | <3Kb
+| 00 | padding | 1 |
+| 01 | sha256 | 32 |
+| 02 | schnorr | 64 |
+| 03 | compact schnorr (128) | 48 |
+| 04 | schema code (legendary) | 32 |
+| 05 | ipfs | 32 |
+| 80 | data (canonical json) | <3Kb |
+| 81 | data (legendary) | <3Kb |
+| 82 | inline schema (legendary) | <3Kb |
+| 83 | url (utf8) | <3Kb |
+| 84 | legendary schema url (utf8) | <3Kb |
 
 ## Signature
 
