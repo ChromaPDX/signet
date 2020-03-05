@@ -32,10 +32,10 @@ In addition to simple data types, Signet protocol enhances the multicodec table 
 
 Many data packets can be formed using layer 1. Therefore, "Layer 2" is simply known uses of layer 1.
 
-Example 1: Simple sha-256
+Example 1: Simple sha-3
 ```
-    [hash   ]
-0x1b   .32B.
+    [hash]
+0x16  +32   
 ```
 
 Example 2: Signature of a hash of an inline CBOR
@@ -44,7 +44,7 @@ Example 2: Signature of a hash of an inline CBOR
       [index]  [sig]    [index]  [hash]  [length]  [cbor]
     []       []       []       []                []
   []                []                 []        
-0x3c3b 01    bc +64 3c3b00     1b  +32 3edb      51 +219
+0x3c3b 01    bc +64 3c3b00     16  +32 3edb      51 +219
 ```
 
 # Layer 3
