@@ -1,51 +1,72 @@
 # Signet
 
-Signet is open provenance. It is a protocol for authoritive codes that are signed, distributed, and later validated, or redeemed.
+Signet is a protocol to convey secure, authoritive symbols across somewhat-trusted boundaries.
 
-* A **signet** is a code signed by an *authority*
-  - An *authority* is a public identity that signs data or schema.
+# Layer 0
 
-  - The *code* is a canonically serialized dictionary, using either an inline or external schema.
+* a *signet* is physical mark, most often represented with Chroma's pinwheel.
+* a *signet* can also be distributed as a QR, Aztec, Jabcode, Databar, or other data carrying mark. This typically mandates a smaller footprint, inclusive of the payload and signatures.
+* Being stored or transmitted digitally, a signet may be represented as binary, or as a [multibase](https://github.com/multiformats/multibase/blob/master/multibase.csv) string.
+ 
+# Layer 1
 
-* *Signets* are most frequently distributed as a QR code. This mandates a small footprint, inclusive of the dictionary and signature.
+Once resolved to as binary, the data is further decoded using the [multicodec](https://github.com/multiformats/multicodec/blob/master/table.csv) table of data types.
 
-* A *signet* is validated by verifying the *code* against a local set of known authorities.
+In addition to simple data types, Signet protocol enhances the multicodec table with structure types. This enables a basic graph of multicodecs may be formed inline, or across the content-space.
 
-* A *signet* can be redeemed by optionally appending a new signature and sending it back or forward to another authority.
-  
-The Signet protocol is made up of both existing and new open standards.
+### Signet additions to Multicodec
+| version | name | data | details |
+| ------- | ------ | ----------- | --- |
+| 30†   | identity | n/a | multicodec with implicit length |
+| 3a    | pointer | multihash | points to a known cid or hashed resource |
+| 3b    | index | varint | points to a multi-codec within the local message |
+| 3c    | association | pointer or index, multicodec |
+| 3d    | list | length, multicodecs | list of multicodecs |
+| 3e    | blob | codec, length, binary | multicodec with explicit length |
+| bb    | bip-schnorr-pub | 32 bytes |
+| bc    | bip-schnorr-multisig | 64 bytes |
 
-## Encoding
+### † multicodecs are by default treated as implicit length. A separate table of those default lengths must be maintained. For example sha3-256 implies a length of 32 bytes.
 
-Signet uses a single byte to determine the message type. To avoid collision with existing QR codes, signet characters that may be 
+# "Layer 2"
 
-| Unsigned | Signed | Descriptor | Length |
-| --- | --- | --- | --- |
-| Fixed |
+Many data packets can be formed using layer 1. Therefore, "Layer 2" is simply known uses of layer 1.
 
-| 68 | C2 | url |  |
-| 20 | legendary
+Example 1: Simple sha-256
+```
+    [hash   ]
+0x1b   .32B.
+```
 
-## Signature
+Example 2: Signature of a hash of an inline CBOR
+```
+    [associative   ]  [associative    ]  [blob          ]
+      [index]  [sig]    [index]  [hash]  [length]  [cbor]
+    []       []       []       []                []
+  []                []                 []        
+0x3c3b 01    bc +64 3c3b00     1b  +32 3edb      51 +219
+```
+
+# Layer 3
+
+A simple layer 3 application might send a signet packet to a known 3rd party. This could include both corporate infrastructure, or a permissionless blockchain.
+
+For instance, a logistics company might emit the public key derived from a signet packet upon receiving a signed message.
+
+A consumer application might re-sign the whole message so that the original producer of the signet may identify who has received their message.
+
+# Best practices
+
+## Signatures
 
 The default digital signature algorithm is [Schnorr](https://en.wikipedia.org/wiki/Schnorr_signature).
 
-## Serialization
+## Content Addressing
 
-- smaller payloads can use [canonical JSON](https://github.com/mirkokiefer/canonical-json).
+The default secure hash algorithm which should be used for content addressing is [SHA3–256](https://en.wikipedia.org/wiki/SHA-3).
 
-- larger payloads or to achieve smaller physical print size a [Legendary container](https://github.com/ChromaPDX/legendary) format may be used.
-  
-***authorities*** aka public keys may sign data.
+## Linked-Data Serialization
 
-***authorities*** may also sign schema, so that data may be distibutes as a values only structure without keys.
+- smaller payloads should use [CBOR](https://cbor.io/) or [JSON](https://github.com/mirkokiefer/canonical-json).
 
-multiple authorities may sign the data (see: https://en.wikipedia.org/wiki/Schnorr_signature)
-
-## Distribute
-
-## Validate
-
-Allow client to validate data either
-1) offline via **cache** of ***authorities*** and ***schemas***
-2) online via a **provider** of ***authorities*** and ***schemas***
+- larger payloads or smallest offline footprints should use [Protobuf](https://developers.google.com/protocol-buffers) via [Legendary](https://github.com/ChromaPDX/legendary) wrapper format.
