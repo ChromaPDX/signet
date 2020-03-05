@@ -12,7 +12,7 @@ Signet is a protocol to convey secure, authoritive symbols across somewhat-trust
 
 Once resolved to as binary, the data is further decoded using the [multicodec](https://github.com/multiformats/multicodec/blob/master/table.csv) table of data types.
 
-In addition to simple data types, Signet protocol enhances the multicodec table with structure types. This enables a basic graph of multicodecs may be formed inline, or across the content-space.
+In addition to simple data types, Signet protocol enhances the multicodec table with structure types. This enables a basic graph of multicodecs to be formed inline or across the content-space.
 
 ### Signet additions to Multicodec
 | version | name | data | details |
