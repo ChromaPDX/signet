@@ -4,7 +4,7 @@ Signet is a protocol that conveys secure, authoritative symbols across somewhat-
 
 Why?
 
-Typically, verifiable statements are simply relationships between signatures and data. Each verifiable statement requires 3 known codecs: Data Serialization, Checksum, and Signature. Currently, there is no portable format that allows the identification and arrangement of these 3 codecs such that their relationship may be identified; therefore, this process inevitably becomes part of a system's implementation code, which is not compatible with other systems, except when made expicitly compatible by convention.
+Typically, verifiable statements are simply relationships between signatures and data. Each verifiable statement requires 3 known codecs: Data Serialization, Checksum, and Signature. Currently, there is no portable format that allows the identification and arrangement of these 3 codecs such that their relationship may be identified; therefore, this process inevitably becomes part of a system's implementation code, which is not compatible with other systems, except when made explicitly compatible by convention.
 
 # The protocol
 
