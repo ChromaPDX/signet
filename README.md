@@ -14,19 +14,23 @@ Once resolved to as binary, the data is further decoded using the [multicodec](h
 
 In addition to simple data types, Signet protocol enhances the multicodec table with structure types. This enables a basic graph of multicodecs to be formed inline or across the content-space.
 
-### Signet additions to Multicodec
+### Signet descriptor types allow for encoding of multiple multicodecs in a single byte stream
 | version | name | data | details |
 | ------- | ------ | ----------- | --- |
 | 30†   | identity | n/a | multicodec with implicit length |
-| 3a    | pointer | multihash | points to a known cid or hashed resource |
-| 3b    | index | varint | points to a multi-codec within the local message |
-| 3c    | association | pointer or index, multicodec |
-| 3d    | list | length, multicodecs | list of multicodecs |
-| 3e    | blob | codec, length, binary | multicodec with explicit length |
-| bb    | bip-schnorr-pub | 32 bytes |
-| bc    | bip-schnorr-multisig | 64 bytes |
+| 3a    | variable | codec, length, binary | define a length for a codec that isn't fixed (like CBOR) |
+| 3b    | pointer | multicodec (hash) | points to a known or discoverable, content addressed resource |
+| 3c    | index | varint | points to a multi-codec within the local message |
+| 3d    | tuple | multicodec, multicodec | associate an index or hash with another multicodec |
+| 3e    | list | length, multicodec[] | list of multicodecs |
+| 3f    | signature | multicodec[] | list is: signature, ...hash algorithms applied, source |
 
-### † multicodecs are by default treated as implicit length. A separate table of those default lengths must be maintained. For example sha3-256 implies a length of 32 bytes.
+### † multicodecs are by default treated as implicit length. A separate table of those default lengths must be maintained, if the implicit length is to be part of automated tooling. For example sha3-256 implies a length of 32 bytes.
+
+### Signet signature types (to be added to multikey)
+
+| bb    | bip-schnorr-pub | 32 bytes |
+| bc    | bip-schnorr-sig | 64 bytes |
 
 # "Layer 2"
 
@@ -35,16 +39,16 @@ Many data packets can be formed using layer 1. Therefore, "Layer 2" is simply kn
 Example 1: Simple sha-3
 ```
     [hash]
-0x16  +32   
+0x16  +32
 ```
 
 Example 2: Signature of a hash of an inline CBOR
 ```
-    [associative   ]  [associative    ]  [blob          ]
+    [tuple         ]  [tuple          ]  [blob          ]
       [index]  [sig]    [index]  [hash]  [length]  [cbor]
     []       []       []       []                []
   []                []                 []        
-0x3c3b 01    bc +64 3c3b00     16  +32 3edb      51 +219
+0x3d3c01     bc +64 3d3c00     16  +32 3adb      51 +219
 ```
 
 # Layer 3
