@@ -2,17 +2,26 @@
 
 Signet is a protocol to convey secure, authoritive symbols across somewhat-trusted boundaries.
 
-# Layer 0
+Why?
+
+Typically verifiable statements are simply relationships between signatures and data. Each statement requires 3 known codecs: Data Serialization, Checksum, Signature. Because there is no portable format which allows identifying these 3 codecs and arranging them such that the relationship may be identified, this process inevitably becomes part of a system's implementation code, which is not compatible with any other, except when made expicitly compatible by convention.
+
+# The protocol
+
+## Layer 0
 
 * a *signet* is physical mark, most often represented with Chroma's pinwheel.
 * a *signet* can also be distributed as a QR, Aztec, Jabcode, Databar, or other data carrying mark. This typically mandates a smaller footprint, inclusive of the payload and signatures.
 * Being stored or transmitted digitally, a signet may be represented as binary, or as a [multibase](https://github.com/multiformats/multibase/blob/master/multibase.csv) string.
  
-# Layer 1
+## Layer 1
 
-Once resolved to as binary, the data is further decoded using the [multicodec](https://github.com/multiformats/multicodec/blob/master/table.csv) table of data types.
+Layer 1 of Signet aims to resolve uniterrupted binary to a graph of multicodec identifiers and optionally their associated binary counterparts.
 
-In addition to simple data types, Signet protocol enhances the multicodec table with structure types. This enables a basic graph of multicodecs to be formed inline or across the content-space.
+
+only exist as part of a particular system's implementation code or state tree.
+
+Signet protocol would like to encode small [multicodec](https://github.com/multiformats/multicodec/blob/master/table.csv) graphs as uninterrupted binary with minimum overhead. Similiar to a usb descriptor, this can be accomplished by simply setting lengths for codecs that do not have a fixed length. Then, with the addition of a few basic index and container types, one can communicate indentified statements portably.
 
 ### Signet descriptor types allow for encoding of multiple multicodecs in a single byte stream
 | version | name | data | details |
@@ -25,16 +34,18 @@ In addition to simple data types, Signet protocol enhances the multicodec table 
 | 3e    | list | length, multicodec[] | list of multicodecs |
 | 3f    | signature | multicodec[] | list is: signature, ...hash algorithms applied, source |
 
-### † multicodecs are by default treated as implicit length. A separate table of those default lengths must be maintained, if the implicit length is to be part of automated tooling. For example sha3-256 implies a length of 32 bytes.
+### †The current multicodec table treats codecs as having implicit length. A separate table of those default lengths must be maintained, if the implicit length is to be used by automated tooling. For example sha3-256 implies a length of 32 bytes.
 
 ### Signet signature types (to be added to multikey)
 
+| version | name | data | details |
+| ------- | ------ | ----------- | --- |
 | bb    | bip-schnorr-pub | 32 bytes |
 | bc    | bip-schnorr-sig | 64 bytes |
 
-# "Layer 2"
+## Layer 2
 
-Many data packets can be formed using layer 1. Therefore, "Layer 2" is simply known uses of layer 1.
+Many data packets can be formed using layer 1. Therefore, Layer 2 is simply known multicodec structures layer 1.
 
 Example 1: Simple sha-3
 ```
@@ -51,7 +62,7 @@ Example 2: Signature of a hash of an inline CBOR
 0x3d3c01     bc +64 3d3c00     16  +32 3adb      51 +219
 ```
 
-# Layer 3
+## Layer 3
 
 A simple layer 3 application might send a signet packet to a known 3rd party. This could include both corporate infrastructure, or a permissionless blockchain.
 
