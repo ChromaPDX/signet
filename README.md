@@ -10,18 +10,17 @@ Typically verifiable statements are simply relationships between signatures and 
 
 ## Layer 0
 
+Storage to binary
+
 * a *signet* is physical mark, most often represented with Chroma's pinwheel.
 * a *signet* can also be distributed as a QR, Aztec, Jabcode, Databar, or other data carrying mark. This typically mandates a smaller footprint, inclusive of the payload and signatures.
 * Being stored or transmitted digitally, a signet may be represented as binary, or as a [multibase](https://github.com/multiformats/multibase/blob/master/multibase.csv) string.
  
 ## Layer 1
 
-Layer 1 of Signet aims to resolve uniterrupted binary to a graph of multicodec identifiers and optionally their associated binary counterparts.
+Binary to multicodec graph
 
-
-only exist as part of a particular system's implementation code or state tree.
-
-Signet protocol would like to encode small [multicodec](https://github.com/multiformats/multicodec/blob/master/table.csv) graphs as uninterrupted binary with minimum overhead. Similiar to a usb descriptor, this can be accomplished by simply setting lengths for codecs that do not have a fixed length. Then, with the addition of a few basic index and container types, one can communicate indentified statements portably.
+Signet protocol aims to allow small [multicodec](https://github.com/multiformats/multicodec/blob/master/table.csv) graphs to be encoded as uninterrupted binary with minimum overhead. Similiar to a usb descriptor, this can be accomplished by simply setting lengths for codecs that do not have a fixed length. Then, with the addition of a few basic index and container types, one can communicate indentified statements portably.
 
 ### Signet descriptor types allow for encoding of multiple multicodecs in a single byte stream
 | version | name | data | details |
@@ -45,21 +44,21 @@ Signet protocol would like to encode small [multicodec](https://github.com/multi
 
 ## Layer 2
 
-Many data packets can be formed using layer 1. Therefore, Layer 2 is simply known multicodec structures layer 1.
+Protocol defined multicodec stuctures
 
-Example 1: Simple sha-3
-```
-    [hash]
-0x16  +32
-```
-
-Example 2: Signature of a hash of an inline CBOR
+Example 1: a "statement" could be a signature of a hash of a CBOR
 ```
     [tuple         ]  [tuple          ]  [blob          ]
       [index]  [sig]    [index]  [hash]  [length]  [cbor]
     []       []       []       []                []
   []                []                 []        
 0x3d3c01     bc +64 3d3c00     16  +32 3adb      51 +219
+```
+
+Example 2: a simple sha-3
+```
+    [hash]
+0x16  +32
 ```
 
 ## Layer 3
