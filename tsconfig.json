@@ -1,0 +1,21 @@
+{
+  "include": [
+    "src/**/*.ts"
+  ],
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "lib",
+    "sourceMap": true,
+    "noImplicitAny": true,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "target": "es5",
+    "lib": [
+      "esnext",
+      "dom"
+    ],
+    "preserveConstEnums": true,
+    "declaration": false,
+    "noEmitOnError": false
+  }
+}

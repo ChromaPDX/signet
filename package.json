@@ -1,0 +1,28 @@
+{
+    "name": "@chromapdx/signet",
+    "version": "0.1.0",
+    "description": "A specification for open provenance; a suite of tools for best practice.",
+    "author": "Leif Shackelford <structuresound@gmail.com>",
+    "license": "MIT",
+    "dependencies": {
+        "@types/varint": "^5.0.0",
+        "cbor": "^5.0.1",
+        "multicodec": "^1.0.0",
+        "varint": "^5.0.0"
+    },
+    "scripts": {
+        "build": "tsc",
+        "test": "NODE_ENV=test mocha --recursive --compilers ts:ts-node/register --bail",
+        "cover": "NODE_ENV=test nyc --report-dir coverage npm t",
+        "travis": "npm run build && npm run cover"
+    },
+    "devDependencies": {
+        "@types/cbor": "^5.0.0",
+        "@types/mocha": "^5",
+        "@types/node": "^10",
+        "@types/chai": "^4.1.7",
+        "chai": "^4.2",
+        "mocha": "^5.2",
+        "ts-node": "^8.6.2"
+    }
+}

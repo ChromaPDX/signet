@@ -27,8 +27,8 @@ Signet protocol aims to allow small [multicodec](https://github.com/multiformats
 | ------- | ------ | ----------- | --- |
 | 30†   | identity | n/a | multicodec with implicit length |
 | 3a    | variable | codec, length, binary | define a length for a codec that isn't fixed (like CBOR) |
-| 3b    | pointer | multicodec (hash) | points to a known or discoverable, content addressed resource |
-| 3c    | index | varint | points to a multi-codec within the local message |
+| 3b    | index | varint | points to a multi-codec within the local message |
+| 3c    | pointer | multicodec (hash) | points to a known or discoverable, content addressed resource |
 | 3d    | tuple | multicodec, multicodec | associate an index or hash with another multicodec |
 | 3e    | list | length, multicodec[] | list of multicodecs |
 | 3f    | signature | multicodec[] | list is: signature, ...hash algorithms applied, source |
@@ -52,7 +52,7 @@ Example 1: a "statement" could be a signature of a hash of a CBOR
       [index]  [sig]    [index]  [hash]  [length]  [cbor]
     []       []       []       []                []
   []                []                 []        
-0x3d3c01     bc +64 3d3c00     16  +32 3adb      51 +219
+0x3d3b01     bc +64 3d3b00     16  +32 3adb      51 +219
 ```
 
 Example 2: a simple sha-3
