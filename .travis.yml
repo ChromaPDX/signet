@@ -1,0 +1,21 @@
+os:
+- linux
+dist: trusty
+language: node_js
+node_js:
+- '8'
+- '10'
+- '12'
+before_install:
+- npm config set progress=false
+script: npm run travis
+after_script:
+- cat ./coverage/lcov.info | ./node_modules/.bin/coveralls
+deploy:
+  provider: npm
+  on:
+    branch: master
+  skip_cleanup: true
+  email: structuresound@gmail.com
+  api_key:
+    secure: F87ylXrJlP4dXSFTlJoCzK8SxFde5tN9+iRVxemjLAuvso+QM8j4V+7GH4XWKgYdb4POgqqWdPjB0wv04Ke/ItIpGrCx0R0llYhPDjbWbuYaNTYBAv96KAo2biwoJtT4RzG3zPldlO0h891gV+jg8BGDidmk47vNt4Nw5YSPJq9xSM1MQ0mGycmAaell3PwVlO9fDyGv4EHE2Dedb3UWVf/fDpNOAvp8oonnczHJWy9fm30K5JCmeHnLuZNHTymK0iT0a0WQ62uaSVSrHaKZTFXnsYQTtsPkLaZVN/ja/n+1asQh0gNW71P5NKhCjafppuDb0l1EIcHG6AjI+RFKX2ageXZX4k3D0ZsAhAtHJoHugoqBLVzMnJsxzEvHZa88vTuvkxexp3AXWc6kHkUoON95UlPs6s+5DjgKiRhPykrLKQJMCnq3OnOo0Wsb8TfF/g+IkbPrb2PYe+bbhier/pzrkUnIEFXfRyPrCW+JMr1fjN9EK7cyaABagb/4r7aMp+0IUl6kYOIrh/gU8AvjLjVBqz3pr4VXLkRRWY0DSSb1V3BP2akgDTBpIx6sDKiiM4vxLv2urOthi827hGwQeXg4/UrvueZriZCsx/lLPK2lugr1xxZLPaGbz6tt2XuOjbtcAtVfcDc1rih8pVfiLaAQ7CPnCzM+KiGL8MCPPxQ=

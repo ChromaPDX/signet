@@ -1,5 +1,5 @@
 
-import { sha3_256 } from './sha3';
+import { sha3_256 } from 'js-sha3';
 import { MultiCodec, encode } from './multicodec';
 
 export const hash = (content: Buffer) => {
