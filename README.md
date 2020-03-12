@@ -1,3 +1,6 @@
+## js-moss [![Build Status](https://travis-ci.org/chromapdx/signet.svg?branch=master)](https://travis-ci.org/chromapdx/signet) [![Coverage Status](https://coveralls.io/repos/github/chromapdx/signet/badge.svg?branch=master)](https://coveralls.io/github/chromapdx/signet?branch=master)
+[![NPM](https://nodei.co/npm/js-moss.png?downloads=true)](https://nodei.co/npm/@chromapdx/signet/)
+
 # Signet
 
 Signet is a protocol that conveys secure, authoritative symbols across somewhat-trusted boundaries.
