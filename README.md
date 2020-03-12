@@ -1,10 +1,10 @@
 # Signet
 
-Signet is a protocol to convey secure, authoritive symbols across somewhat-trusted boundaries.
+Signet is a protocol that conveys secure, authoritative symbols across somewhat-trusted boundaries.
 
 Why?
 
-Typically verifiable statements are simply relationships between signatures and data. Each statement requires 3 known codecs: Data Serialization, Checksum, Signature. Because there is no portable format which allows identifying these 3 codecs and arranging them such that the relationship may be identified, this process inevitably becomes part of a system's implementation code, which is not compatible with any other, except when made expicitly compatible by convention.
+Typically, verifiable statements are simply relationships between signatures and data. Each verifiable statement requires 3 known codecs: Data Serialization, Checksum, and Signature. Currently, there is no portable format that allows the identification and arrangement of these 3 codecs such that their relationship may be identified; therefore, this process inevitably becomes part of a system's implementation code, which is not compatible with other systems, except when made explicitly compatible by convention.
 
 # The protocol
 
@@ -12,7 +12,7 @@ Typically verifiable statements are simply relationships between signatures and 
 
 Storage to binary
 
-* a *signet* is physical mark, most often represented with Chroma's pinwheel.
+* a *signet* is a physical mark, most often represented by Chroma's pinwheel.
 * a *signet* can also be distributed as a QR, Aztec, Jabcode, Databar, or other data carrying mark. This typically mandates a smaller footprint, inclusive of the payload and signatures.
 * Being stored or transmitted digitally, a signet may be represented as binary, or as a [multibase](https://github.com/multiformats/multibase/blob/master/multibase.csv) string.
  
@@ -63,7 +63,7 @@ Example 2: a simple sha-3
 
 ## Layer 3
 
-A simple layer 3 application might send a signet packet to a known 3rd party. This could include both corporate infrastructure, or a permissionless blockchain.
+A simple layer 3 application might send a signet packet to a known 3rd party. This could include a corporate infrastructure, or a permissionless blockchain.
 
 For instance, a logistics company might emit the public key derived from a signet packet upon receiving a signed message.
 
