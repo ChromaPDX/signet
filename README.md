@@ -1,5 +1,7 @@
-[![Build Status](https://travis-ci.org/chromapdx/signet.svg?branch=master)](https://travis-ci.org/chromapdx/signet) [![Coverage Status](https://coveralls.io/repos/github/chromapdx/signet/badge.svg?branch=master)](https://coveralls.io/github/chromapdx/signet?branch=master)
 [![NPM](https://nodei.co/npm/@chromapdx/signet.png?downloads=true)](https://nodei.co/npm/@chromapdx/signet/)
+[![Build Status](https://travis-ci.org/ChromaPDX/signet.svg?branch=master)](https://travis-ci.org/ChromaPDX/signet)[![Coverage Status](https://coveralls.io/repos/github/ChromaPDX/signet/badge.svg?branch=master)](https://coveralls.io/github/ChromaPDX/signet?branch=master)
+
+# Chroma Signet
 
 Signet is a protocol that conveys secure, authoritative symbols across somewhat-trusted boundaries.
 
@@ -24,24 +26,24 @@ Binary to multicodec graph
 Signet protocol aims to allow small [multicodec](https://github.com/multiformats/multicodec/blob/master/table.csv) graphs to be encoded as uninterrupted binary with minimum overhead. Similiar to a usb descriptor, this can be accomplished by simply setting lengths for codecs that do not have a fixed length. Then, with the addition of a few basic index and container types, one can communicate indentified statements portably.
 
 ### Signet descriptor types allow for encoding of multiple multicodecs in a single byte stream
-| version | name | data | details |
-| ------- | ------ | ----------- | --- |
-| 30†   | identity | n/a | multicodec with implicit length |
-| 3a    | variable | codec, length, binary | define a length for a codec that isn't fixed (like CBOR) |
-| 3b    | index | varint | points to a multi-codec within the local message |
-| 3c    | pointer | multicodec (hash) | points to a known or discoverable, content addressed resource |
-| 3d    | tuple | multicodec, multicodec | associate an index or hash with another multicodec |
-| 3e    | list | length, multicodec[] | list of multicodecs |
-| 3f    | signature | multicodec[] | list is: signature, ...hash algorithms applied, source |
+| version | name      | data                   | details                                                       |
+| ------- | --------- | ---------------------- | ------------------------------------------------------------- |
+| 30†     | identity  | n/a                    | multicodec with implicit length                               |
+| 3a      | variable  | codec, length, binary  | define a length for a codec that isn't fixed (like CBOR)      |
+| 3b      | index     | varint                 | points to a multi-codec within the local message              |
+| 3c      | pointer   | multicodec (hash)      | points to a known or discoverable, content addressed resource |
+| 3d      | tuple     | multicodec, multicodec | associate an index or hash with another multicodec            |
+| 3e      | list      | length, multicodec[]   | list of multicodecs                                           |
+| 3f      | signature | multicodec[]           | list is: signature, ...hash algorithms applied, source        |
 
 ### †The current multicodec table treats codecs as having implicit length. A separate table of those default lengths must be maintained, if the implicit length is to be used by automated tooling. For example sha3-256 implies a length of 32 bytes.
 
 ### Signet signature types (to be added to multikey)
 
-| version | name | data | details |
-| ------- | ------ | ----------- | --- |
-| bb    | bip-schnorr-pub | 32 bytes |
-| bc    | bip-schnorr-sig | 64 bytes |
+| version | name            | data     | details |
+| ------- | --------------- | -------- | ------- |
+| bb      | bip-schnorr-pub | 32 bytes |
+| bc      | bip-schnorr-sig | 64 bytes |
 
 ## Layer 2
 
