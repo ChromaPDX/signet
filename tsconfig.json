@@ -5,17 +5,24 @@
   "compilerOptions": {
     "rootDir": "src",
     "outDir": "lib",
-    "sourceMap": true,
-    "noImplicitAny": true,
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": ".",
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "downlevelIteration": true,
+    "emitDecoratorMetadata": true,
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "preserveConstEnums": true,
+    // "importHelpers": true,
+    "lib": ["esnext", "dom"],
     "module": "commonjs",
     "moduleResolution": "node",
-    "target": "es5",
-    "lib": [
-      "esnext",
-      "dom"
-    ],
-    "preserveConstEnums": true,
-    "declaration": false,
-    "noEmitOnError": false
+    "sourceMap": true,
+    "resolveJsonModule": true,
+    // "noUnusedLocals": true,
+    // "strict": true,
+    "target": "es5"
   }
 }

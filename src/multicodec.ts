@@ -1,4 +1,4 @@
-import * as assert from 'assert';
+import { equal } from 'assert';
 import { VarInt, join as joinVarInts } from "./varint";
 import * as cbor from 'cbor';
 
@@ -10,7 +10,7 @@ export class MultiCodec {
     version: VarInt;
     data: Buffer;
     // container type
-    blob: MultiCodec
+    blob: MultiCodec;
     index: number;
     list: MultiCodec[];
     pointer: boolean;
@@ -41,7 +41,7 @@ export class MultiCodec {
                 }
                 const blobData = data.slice(0, blobLength.value)
                 this.blob = new MultiCodec(blobData);
-                assert(this.blob.length == blobLength.value, `${this.blob.length} != ${blobLength.value}`);
+                equal(this.blob.length, blobLength.value, `${this.blob.length} != ${blobLength.value}`);
                 data = data.slice(blobLength.value);
                 this.length += this.blob.length;
                 break;

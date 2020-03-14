@@ -1,9 +1,9 @@
 const BigInteger = require('bigi');
-const schnorr = require('bip-schnorr');
-const convert = schnorr.convert;
+// const schnorr = require('bip-schnorr');
 
 import { getCurveByName } from 'ecurve';
 const ecparams = getCurveByName('secp256k1');
+
 
 export const extractPubkey = (privateKey: Buffer | BigInteger, compressed = true) => {
     let bigi: BigInteger;
