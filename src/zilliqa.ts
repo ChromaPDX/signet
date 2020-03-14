@@ -19,8 +19,8 @@ export const getWallet = (key?: string) => {
     return wallet;
 }
 
-export const sign = ({ message, key }: { [x: string]: string }) => {
-    const pubKey = getPubKeyFromPrivateKey(key);
+export const sign = ({ message, key, pubKey }: { [x: string]: string }) => {
+    if (!pubKey) pubKey = getPubKeyFromPrivateKey(key);
     return schnorr.sign(
         Buffer.from(message, 'hex'),
         Buffer.from(key, 'hex'),

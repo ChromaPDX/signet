@@ -28,7 +28,7 @@ describe('Schnorr', () => {
     it('sign and verify', () => {
         createdSignature = schnorr.sign(privateKey, message);
         assert.ok(createdSignature.equals(signatureToVerify), `${createdSignature} != ${signatureToVerify} : signature does not match fixture`);
-        schnorr.verify(publicKey, message, signatureToVerify);
+        schnorr.verify(publicKey, message, createdSignature);
     });
 
     it('signature is idempote', () => {
