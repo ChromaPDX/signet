@@ -5,28 +5,29 @@ import { assert } from 'chai';
 
 import { extractPubkey } from '../src/schnorr';
 
+import { fixtures } from './curve';
+
 describe('Schnorr', () => {
     let createdSignature: any;
-    const privateKey = BigInteger.fromHex('B7E151628AED2A6ABF7158809CF4F3C762E7160F38B4DA56A784D9045190CFEF');
-
+    const privateKey = BigInteger.fromHex(fixtures.privateKey);
     it('privateKey is 32 bytes', () => {
         const buffer = Buffer.from('B7E151628AED2A6ABF7158809CF4F3C762E7160F38B4DA56A784D9045190CFEF', 'hex');
         assert.equal(buffer.length, 32, 'private key is not 32 bytes');
     });
 
-    const message = Buffer.from('243F6A8885A308D313198A2E03707344A4093822299F31D0082EFA98EC4E6C89', 'hex');
-    const pubKeyFixture = '02dff1d77f2a671c5f36183726db2341be58feae1da2deced843240f7b502ba659';
-    const publicKey = Buffer.from(pubKeyFixture, 'hex');
+    const message = Buffer.from(fixtures.message, 'hex');
+    const publicKey = Buffer.from(fixtures.publicKey, 'hex');
 
     it('recover pub key', () => {
         const extracted = extractPubkey(privateKey);
-        assert.equal(extracted, pubKeyFixture, `${extracted} != ${pubKeyFixture} : not recovered correctly`);
+        assert.equal(extracted, fixtures.publicKey, `${extracted} != ${fixtures.publicKey} : not recovered correctly`);
     });
 
-    const signatureToVerify = Buffer.from('2A298DACAE57395A15D0795DDBFD1DCB564DA82B0F269BC70A74F8220429BA1D1E51A22CCEC35599B8F266912281F8365FFC2D035A230434A1A64DC59F7013FD', 'hex');
+    const signatureToVerify = Buffer.from(fixtures.signature, 'hex');
 
     it('sign and verify', () => {
         createdSignature = schnorr.sign(privateKey, message);
+        assert.ok(createdSignature.equals(signatureToVerify), `${createdSignature} != ${signatureToVerify} : signature does not match fixture`);
         schnorr.verify(publicKey, message, signatureToVerify);
     });
 

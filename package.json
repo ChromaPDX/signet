@@ -5,6 +5,8 @@
     "author": "Leif Shackelford <structuresound@gmail.com>",
     "license": "MIT",
     "dependencies": {
+        "@stablelib/hmac-drbg": "^1.0.0",
+        "@zilliqa-js/crypto": "^0.8.9",
         "bip-schnorr": "^0.3.0",
         "cbor": "^5.0.1",
         "js-sha3": "^0.8.0",
