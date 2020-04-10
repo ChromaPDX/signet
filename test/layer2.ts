@@ -1,49 +1,135 @@
-import * as cbor from 'cbor';
-import { assert } from 'chai';
+import * as cbor from "cbor";
+import { assert } from "chai";
+import { stringify } from "typed-json-transform";
+import { decode, encode } from "../src/layer2";
+import { VarInt, join } from "../src/varint";
+import { MultiCodec, versions } from "../src/multicodec";
+import { testFixture as helloSignetFixture, HelloSignet } from "./helloCode";
 
-import { decode, encode } from '../src/layer2';
-import { VarInt, join } from '../src/varint';
-import { MultiCodec } from '../src/multicodec';
+const helloWorld = { hello: "world" };
+const helloWorldSignetBuffer = "3a0e51a16568656c6c6f65776f726c64";
+const helloContainers = [{ message: "hello" }, { message: "world" }];
+const helloContainersBuffer =
+  "3e023a1051a1676d6573736167656568656c6c6f3a1051a1676d65737361676565776f726c64";
 
-const helloWorld = { hello: 'world' }
-const helloWorldSignetBuffer = '3a0e51a16568656c6c6f65776f726c64';
+describe("Fixtures", () => {
+  it("check VarInt", () => {
+    const single = new VarInt(0x3a);
+    const double = new VarInt(150);
+    assert.equal(single.toHexString(), "3a");
+    assert.equal(double.toHexString(), "9601");
+  });
 
-describe('Fixtures', () => {
-    it('check VarInt', () => {
-        const single = new VarInt(0x3a);
-        const double = new VarInt(150);
-        assert.equal(single.toHexString(), '3a');
-        assert.equal(double.toHexString(), '9601');
+  it("check container versions", () => {
+    assert.equal(versions.containers.variable, 0x3a);
+    assert.equal(versions.containers.list, 0x3e);
+  });
+
+  it("check serialization versions", () => {
+    assert.equal(versions.serialization.cbor, 0x51);
+  });
+
+  it("construct manually", () => {
+    const blobWrapper = new VarInt(versions.containers.variable);
+    const blobProtocol = new VarInt(versions.serialization.cbor);
+    const blobData = cbor.encode(helloWorld);
+    const blobLength = new VarInt(blobProtocol.length() + blobData.length);
+    const testMessage = Buffer.concat([
+      blobWrapper.data(),
+      blobLength.data(),
+      blobProtocol.data(),
+      blobData,
+    ]);
+    assert.equal(testMessage.toString("hex"), helloWorldSignetBuffer);
+  });
+
+  it("construct using dictionary", () => {
+    const test = MultiCodec.FromObject({
+      kind: versions.containers.variable,
+      value: {
+        kind: versions.serialization.cbor,
+        value: helloWorld,
+      },
     });
+    assert.deepEqual(test.toObject(), helloWorld);
+    assert.equal(test.toBuffer().toString("hex"), helloWorldSignetBuffer);
+  });
 
-    it('produces test fixtures', () => {
-        const blobWrapper = new VarInt(0x3a);
-        const blobProtocol = new VarInt(0x51);
-        const blobData = cbor.encode(helloWorld);
-        const blobLength = new VarInt(blobProtocol.bytes.length + blobData.length);
-        testMessage = Buffer.concat([blobWrapper.bytes, blobLength.bytes, blobProtocol.bytes, blobData]);
-        assert.equal(testMessage.toString('hex'), helloWorldSignetBuffer);
+  it("construct using shortHand", () => {
+    // Object
+    const test = MultiCodec.Auto(helloWorld);
+    assert.deepEqual(test.toObject(), helloWorld);
+    assert.equal(test.toBuffer().toString("hex"), helloWorldSignetBuffer);
+  });
+
+  it("construct array manually", () => {
+    const listWrapper = new VarInt(versions.containers.list);
+    const listLength = new VarInt(2);
+    const items = helloContainers.map((c) => {
+      const wrapper = new VarInt(versions.containers.variable);
+      const protocol = new VarInt(versions.serialization.cbor);
+      const data = cbor.encode(c);
+      const length = new VarInt(protocol.length() + data.length);
+      return Buffer.concat([
+        wrapper.data(),
+        length.data(),
+        protocol.data(),
+        data,
+      ]);
     });
+    const message = Buffer.concat([
+      listWrapper.data(),
+      listLength.data(),
+      ...items,
+    ]);
+    assert.equal(message.toString("hex"), helloContainersBuffer);
+  });
+
+  it("construct array using shortHand", () => {
+    // Array
+    const test = MultiCodec.Auto(helloContainers);
+    assert.deepEqual(test.toObject(), helloContainers);
+    assert.equal(test.toBuffer().toString("hex"), helloContainersBuffer);
+  });
 });
 
-let testMessage: Buffer;
-let layer2: MultiCodec[];
+describe("Decode", () => {
+  let testMessage = Buffer.from(helloWorldSignetBuffer, "hex");
+  const layer2 = decode(testMessage);
 
-describe('Decode', () => {
-    it('can produce MultiCodec objects from buffer', () => {
-        layer2 = decode(testMessage);
-        assert.ok(layer2[0].blob.data.length);
-    });
+  it("can produce MultiCodec objects from buffer", () => {
+    assert.ok(layer2[0].variable.length());
+  });
 
-    it('can produce a JS object from CBOR', () => {
-        const js = layer2[0].decode();
-        assert.deepEqual(js, helloWorld);
-    });
+  it("can produce a JS object from CBOR", () => {
+    const js = layer2[0].toObject();
+    assert.deepEqual(js, helloWorld);
+  });
+
+  it("encode Proto", () => {
+    const { js, buffer } = helloSignetFixture();
+    assert.deepEqual(
+      new Buffer(HelloSignet.encode(js).finish()).toString("hex"),
+      buffer
+    );
+  });
+
+  it("decode Proto", () => {
+    const { js, buffer } = helloSignetFixture();
+    const decoded = HelloSignet.decode(Buffer.from(buffer, "hex")).toJSON();
+    assert.deepEqual(decoded, js, `${stringify(decoded)} != ${stringify(js)}`);
+  });
 });
 
-describe('Encode', () => {
-    it('can encode Multiprotocol objects into signet binary', () => {
-        const encoded = encode(...layer2);
-        assert(!testMessage.compare(encoded), `\n${testMessage.toString('hex')} !=\n${encoded.toString('hex')}`);
-    });
+describe("Encode", () => {
+  let testMessage = Buffer.from(helloWorldSignetBuffer, "hex");
+  const layer2 = decode(testMessage);
+
+  it("can encode Multiprotocol objects into signet binary", () => {
+    const encoded = encode(...layer2);
+    assert(
+      !testMessage.compare(encoded),
+      `\n${testMessage.toString("hex")} !=\n${encoded.toString("hex")}`
+    );
+  });
 });
