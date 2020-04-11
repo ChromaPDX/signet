@@ -1,6 +1,5 @@
 import * as cbor from "cbor";
 import { assert } from "chai";
-import { stringify } from "typed-json-transform";
 import { decode, encode } from "../src/layer2";
 import { VarInt, join } from "../src/varint";
 import { MultiCodec, versions } from "../src/multicodec";
@@ -117,7 +116,7 @@ describe("Decode", () => {
   it("decode Proto", () => {
     const { js, buffer } = helloSignetFixture();
     const decoded = HelloSignet.decode(Buffer.from(buffer, "hex")).toJSON();
-    assert.deepEqual(decoded, js, `${stringify(decoded)} != ${stringify(js)}`);
+    assert.deepEqual(decoded, js);
   });
 });
 
