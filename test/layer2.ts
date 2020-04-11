@@ -17,6 +17,8 @@ describe("Fixtures", () => {
     const double = new VarInt(150);
     assert.equal(single.toHexString(), "3a");
     assert.equal(double.toHexString(), "9601");
+    const joined = join(single, double);
+    assert.equal(joined, "3a9601");
   });
 
   it("check container versions", () => {
