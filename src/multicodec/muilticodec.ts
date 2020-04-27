@@ -45,7 +45,7 @@ export class MultiCodec {
   static Auto = (o: any, options?: AutoOptions) =>
     MultiCodec.FromObject(o, options || autoDefaults);
 
-  static FromObject = (o, auto?: AutoOptions) => {
+  static FromObject = (o: any, auto?: AutoOptions): MultiCodec => {
     if (auto && auto.arrayToList && check(o, Array))
       return MultiCodec.FromArray(o, auto);
     if (o.kind && o.value) {
@@ -233,3 +233,5 @@ export class MultiCodec {
     }
   };
 }
+
+export const auto = MultiCodec.Auto;

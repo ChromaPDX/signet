@@ -1,14 +1,12 @@
 {
-  "include": [
-    "src/**/*.ts"
-  ],
+  "include": ["src/**/*.ts"],
   "compilerOptions": {
     "rootDir": "src",
-    "outDir": "lib",
+    "outDir": "dist",
+    "declaration": true,
     "allowSyntheticDefaultImports": true,
     "baseUrl": ".",
     "composite": true,
-    "declaration": true,
     "declarationMap": true,
     "downlevelIteration": true,
     "emitDecoratorMetadata": true,
