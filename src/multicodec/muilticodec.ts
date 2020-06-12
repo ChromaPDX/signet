@@ -3,6 +3,7 @@ import { VarInt, join as joinVarInts, shiftVarInt } from "../varint";
 import { check, contains, map, stringify } from "typed-json-transform";
 import * as encode from "./encode";
 import * as decode from "./decode";
+import { arrayBufferToBuffer } from './util';
 import { versions, nameForVersion, lengthForVersion } from "./table";
 
 export const variableVersions = map(versions.serialization, (v, k) => v);
@@ -40,7 +41,7 @@ export class MultiCodec {
   list: MultiCodec[];
   pointer: MultiCodec | VarInt;
 
-  static FromBuffer = (data: Buffer) => new MultiCodec().loadBuffer(data);
+  static FromBuffer = (data: Buffer | ArrayBuffer) => new MultiCodec().loadBuffer(data);
 
   static Auto = (o: any, options?: AutoOptions) =>
     MultiCodec.FromObject(o, options || autoDefaults);
@@ -62,8 +63,8 @@ export class MultiCodec {
   static FromArray = (a, auto?: AutoOptions) =>
     MultiCodec.FromVersion(versions.containers.list, a, auto);
 
-  static FromVersion = (version: number, value: any, auto: AutoOptions) => {
-    if (auto && auto.wrapVariables && contains(variableVersions, version)) {
+  static FromVersion = (version: number, value: any, auto?: AutoOptions) => {
+    if (auto?.wrapVariables && contains(variableVersions, version)) {
       return MultiCodec.FromVersion(
         versions.containers.variable,
         { kind: version, value },
@@ -75,11 +76,23 @@ export class MultiCodec {
     }
     const codec = new MultiCodec();
     codec.version = new VarInt(version);
-    codec.loadObject(value, auto);
+    if ((value instanceof ArrayBuffer) || Buffer.isBuffer(value)) {
+      // console.log('load buffer for version', codec.version);
+      codec.loadData(value);
+    } else {
+      // console.log('load object for version', codec.version);
+      codec.loadObject(value, auto);
+    }
     return codec;
   };
 
-  loadBuffer = (data: Buffer) => {
+  loadBuffer = (buffer: Buffer | ArrayBuffer) => {
+    let data: Buffer;
+    if (buffer instanceof ArrayBuffer) {
+      data = arrayBufferToBuffer(buffer);
+    } else {
+      data = buffer;
+    }
     try {
       this.version = new VarInt(data);
       data = data.slice(this.version.length());
@@ -90,7 +103,13 @@ export class MultiCodec {
     return this;
   };
 
-  loadData = (data: Buffer) => {
+  loadData = (buffer: Buffer | ArrayBuffer) => {
+    let data: Buffer;
+    if (buffer instanceof ArrayBuffer) {
+      data = arrayBufferToBuffer(buffer);
+    } else {
+      data = buffer;
+    }
     switch (this.version.value) {
       case versions.containers.variable: {
         let varLength: VarInt;
@@ -140,6 +159,7 @@ export class MultiCodec {
           this.body = data.slice(0, lengthForVersion(this.version.value));
         }
         this.body = data;
+        console.log('signet data length', this.body.length)
         break;
       }
     }
@@ -222,12 +242,14 @@ export class MultiCodec {
       }
       default: {
         if (this.headers && this.headers.length) {
-          return Buffer.concat([
+          const buf = Buffer.concat([
             this.version.data(),
             ...this.headers.map((h) => h.data()),
             this.body,
           ]);
+          console.log('mc [', this.version.data().length, this.headers.length, this.body.length, ']');
         }
+        console.log('mc [', this.version.data().length, this.body.length, ']');
         return Buffer.concat([this.version.data(), this.body]);
       }
     }

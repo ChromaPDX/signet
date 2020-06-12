@@ -22,7 +22,11 @@ export class VarInt {
   constructor(source: Buffer | number) {
     if (typeof source == "number") {
       this.value = source;
-      this.bytes = Buffer.from(encode(source));
+      const byteArray = encode(source);
+      if (byteArray.length > 1) {
+        console.log(source, '=>', byteArray);
+      }
+      this.bytes = Buffer.from(byteArray);
     } else {
       try {
         this.value = decode(source);

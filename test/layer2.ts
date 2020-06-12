@@ -12,13 +12,15 @@ const helloContainersBuffer =
   "3e023a1051a1676d6573736167656568656c6c6f3a1051a1676d65737361676565776f726c64";
 
 describe("Fixtures", () => {
-  it("check VarInt", () => {
-    const single = new VarInt(0x3a);
-    const double = new VarInt(150);
-    assert.equal(single.toHexString(), "3a");
-    assert.equal(double.toHexString(), "9601");
+  it("use VarInt", () => {
+    const single = new VarInt(0x23);
+    assert.equal(single.toHexString(), "23");
+    assert.equal(single.length(), 1);
+    const double = new VarInt(0xe7);
+    assert.equal(double.toHexString(), "e701");
+    assert.equal(double.length(), 2);
     const joined = join(single, double);
-    assert.equal(joined, "3a9601");
+    assert.equal(joined, "23e701");
   });
 
   it("check container versions", () => {
