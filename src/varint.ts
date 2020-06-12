@@ -23,9 +23,6 @@ export class VarInt {
     if (typeof source == "number") {
       this.value = source;
       const byteArray = encode(source);
-      if (byteArray.length > 1) {
-        console.log(source, '=>', byteArray);
-      }
       this.bytes = Buffer.from(byteArray);
     } else {
       try {

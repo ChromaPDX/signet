@@ -159,7 +159,7 @@ export class MultiCodec {
           this.body = data.slice(0, lengthForVersion(this.version.value));
         }
         this.body = data;
-        console.log('signet data length', this.body.length)
+        // console.log('signet data length', this.body.length)
         break;
       }
     }
@@ -247,9 +247,9 @@ export class MultiCodec {
             ...this.headers.map((h) => h.data()),
             this.body,
           ]);
-          console.log('mc [', this.version.data().length, this.headers.length, this.body.length, ']');
+          // console.log('mc [', this.version.data().length, this.headers.length, this.body.length, ']');
         }
-        console.log('mc [', this.version.data().length, this.body.length, ']');
+        // console.log('mc [', this.version.data().length, this.body.length, ']');
         return Buffer.concat([this.version.data(), this.body]);
       }
     }
