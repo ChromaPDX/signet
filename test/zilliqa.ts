@@ -3,7 +3,7 @@ import { assert } from 'chai';
 // const BigInteger = require('bigi');
 // const schnorr = require('../src/bip-schnorr/src');
 
-import { fixtures } from './curve';
+import { fixtures } from '../fixtures/curve';
 import { getWallet, verify, sign, Signature } from '../src/zilliqa';
 
 describe('Zilliqa', () => {
@@ -32,7 +32,7 @@ describe('Zilliqa', () => {
 //     it('verify Zilliqa sig with bip-schnorr', () => {
 //         const { message, privateKey, publicKey } = fixtures;
 //         const sig = sign({ message, key: privateKey, publicKey });
-        
+
 //         const zilVerified = verify(sig,
 //             Buffer.from(message, 'hex'),
 //             Buffer.from(publicKey, 'hex')

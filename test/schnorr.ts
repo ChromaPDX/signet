@@ -5,7 +5,7 @@ import { assert } from 'chai';
 
 import { extractPubkey } from '../src/schnorr';
 
-import { fixtures } from './curve';
+import { fixtures } from "../fixtures/curve";
 
 describe('Schnorr', () => {
     let createdSignature: any;

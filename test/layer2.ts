@@ -3,7 +3,7 @@ import { assert } from "chai";
 import { decode, encode } from "../src/layer2";
 import { VarInt, join } from "../src/varint";
 import { MultiCodec, versions } from "../src/multicodec";
-import { testFixture as helloSignetFixture, HelloSignet } from "./helloCode";
+import { testFixture as helloSignetFixture, HelloSignet } from "../fixtures/helloCode";
 
 const helloWorld = { hello: "world" };
 const helloWorldSignetBuffer = "3a0e51a16568656c6c6f65776f726c64";

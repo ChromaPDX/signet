@@ -1,13 +1,9 @@
-import * as zilliqa from '@zilliqa-js/crypto';
-
-import { Signature } from '@zilliqa-js/crypto';
-
-const {
-    getPubKeyFromPrivateKey,
+import {
+    Signature, getPubKeyFromPrivateKey,
     getAddressFromPublicKey,
     compressPublicKey,
     schnorr
-} = zilliqa;
+} from '@zilliqa-js/crypto';
 
 export { Signature };
 
