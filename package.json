@@ -12,7 +12,7 @@
     "multicodec": "^1.0",
     "varint": "^5.0",
     "protobufjs": "^6.9",
-    "typed-json-transform": "^0.24"
+    "typed-json-transform": "^0.25"
   },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
