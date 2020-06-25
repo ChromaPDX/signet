@@ -9,12 +9,11 @@ export default {
   input: "src/index.ts",
   output: {
     dir: ".",
-    // file: "bundle.js",
-    // format: "cjs",
   },
   plugins: [
     resolve(),
     json(),
+    // babel(),
     commonjs({
       include: [
         "node_modules/typed-json-transform/dist/index.js",

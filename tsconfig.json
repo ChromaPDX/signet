@@ -21,6 +21,6 @@
     "resolveJsonModule": true,
     // "noUnusedLocals": true,
     // "strict": true,
-    "target": "ESNext"
+    "target": "ES6"
   }
 }
