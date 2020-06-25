@@ -3,9 +3,8 @@ os:
 dist: trusty
 language: node_js
 node_js:
-- '8'
 - '10'
-- '12'
+- '11'
 before_install:
 - npm config set progress=false
 script: npm run travis
