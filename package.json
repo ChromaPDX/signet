@@ -1,6 +1,6 @@
 {
   "name": "@chromapdx/signet",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "A specification for open provenance; a suite of tools for best practice.",
   "author": "Leif Shackelford <structuresound@gmail.com>",
   "license": "MIT",
@@ -12,7 +12,7 @@
     "multicodec": "^1.0",
     "varint": "^5.0",
     "protobufjs": "^6.9",
-    "typed-json-transform": "^0.25"
+    "typed-json-transform": "^0.24"
   },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
