@@ -3,7 +3,7 @@ import { assert } from 'chai';
 // const BigInteger = require('bigi');
 // const schnorr = require('../src/bip-schnorr/src');
 
-import { fixtures } from '../fixtures/curve';
+import { fixtures } from '../../fixtures/curve';
 import { getWallet, verify, sign, Signature } from '../esm/zilliqa';
 
 describe('Zilliqa', () => {

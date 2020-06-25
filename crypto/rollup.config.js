@@ -1,6 +1,5 @@
 // rollup.config.js
 import resolve from "@rollup/plugin-node-resolve";
-import babel from "@rollup/plugin-babel";
 import typescript from "@rollup/plugin-typescript";
 import commonjs from "@rollup/plugin-commonjs";
 import json from "@rollup/plugin-json";
@@ -17,16 +16,16 @@ export default {
     json(),
     commonjs({
       include: [
-        "node_modules/typed-json-transform/index.js",
-        // "node_modules/cbor/lib/cbor.js",
-        "node_modules/varint/index.js",
-        "node_modules/js-sha3/src/sha3.js",
+        "node_modules/bn.js/lib/bn.js",
+        "node_modules/long/src/long.js",
+        "node_modules/hash.js/lib/hash.js",
+        "node_modules/hmac-drbg/lib/hmac-drbg.js",
+        "node_modules/scryptsy/lib/index.js",
+        "node_modules/pbkdf2/index.js",
+        "node_modules/aes-js/index.js",
+        "node_modules/uuid/index.js",
       ],
-      // exclude: ["node_modules/cbor/lib/cbor.js"],
-      transformMixedEsModules: true,
-      // dynamicRequireTargets: ["node_modules/cbor/lib/cbor.js"],
     }),
     typescript(),
-    // babel(),
   ],
 };

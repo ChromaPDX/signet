@@ -1,0 +1,31 @@
+{
+  "name": "@chromapdx/signet",
+  "version": "0.2.4",
+  "description": "A specification for open provenance; a suite of tools for best practice.",
+  "author": "Leif Shackelford <structuresound@gmail.com>",
+  "license": "MIT",
+  "private": false,
+  "main": "esm/index.js",
+  "types": "esm/index.d.ts",
+  "scripts": {
+    "build": "rm -Rf esm && rm -f tsconfig.tsbuildinfo && rollup --config rollup.config.js && tsc",
+    "test": "NODE_ENV=test mocha --require @babel/register \"test/**/*.js\" --bail",
+    "cover": "NODE_ENV=test nyc --report-dir coverage npm t",
+    "travis": "npm run build && npm run cover"
+  },
+  "dependencies": {
+    "@zilliqa-js/crypto": "^0.11.0"
+  },
+  "devDependencies": {},
+  "resolutions": {
+    "scrypt.js": "0.3.0"
+  },
+  "nyc": {
+    "extends": "@istanbuljs/nyc-config-babel",
+    "reporter": [
+      "json",
+      "html",
+      "lcov"
+    ]
+  }
+}
