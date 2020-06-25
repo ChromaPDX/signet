@@ -1,5 +1,5 @@
 import { encode as cbor } from "cbor";
-import { stringify } from "typed-json-transform/esm";
+import { stringify } from "typed-json-transform";
 
 export { cbor }
 

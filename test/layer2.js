@@ -1,9 +1,12 @@
-import * as cbor from "cbor";
 import { assert } from "chai";
-import { decode, encode } from "../src/layer2";
-import { VarInt, join } from "../src/varint";
-import { MultiCodec, versions } from "../src/multicodec";
-import { testFixture as helloSignetFixture, HelloSignet } from "../fixtures/helloCode";
+import { decode, encode } from "../esm/layer2";
+import { VarInt, join } from "../esm/varint";
+import { MultiCodec, versions } from "../esm/multicodec";
+import { encode as encodeCbor } from "cbor";
+import {
+  testFixture as helloSignetFixture,
+  HelloSignet,
+} from "../esm/fixtures";
 
 const helloWorld = { hello: "world" };
 const helloWorldSignetBuffer = "3a0e51a16568656c6c6f65776f726c64";
@@ -35,7 +38,7 @@ describe("Fixtures", () => {
   it("construct manually", () => {
     const blobWrapper = new VarInt(versions.containers.variable);
     const blobProtocol = new VarInt(versions.serialization.cbor);
-    const blobData = cbor.encode(helloWorld);
+    const blobData = encodeCbor(helloWorld);
     const blobLength = new VarInt(blobProtocol.length() + blobData.length);
     const testMessage = Buffer.concat([
       blobWrapper.data(),
@@ -71,7 +74,7 @@ describe("Fixtures", () => {
     const items = helloContainers.map((c) => {
       const wrapper = new VarInt(versions.containers.variable);
       const protocol = new VarInt(versions.serialization.cbor);
-      const data = cbor.encode(c);
+      const data = encodeCbor(c);
       const length = new VarInt(protocol.length() + data.length);
       return Buffer.concat([
         wrapper.data(),

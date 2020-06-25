@@ -1,6 +1,6 @@
 // import { equal as assertEqual } from "assert";
 import { VarInt, join as joinVarInts, shiftVarInt } from "../varint";
-import { check, contains, map, stringify, isEqual } from "typed-json-transform/esm";
+import { check, contains, map, stringify, isEqual } from "typed-json-transform";
 import * as encode from "./encode";
 import * as decode from "./decode";
 import { arrayBufferToBuffer } from './util';

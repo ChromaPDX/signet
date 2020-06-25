@@ -5,7 +5,7 @@ import {
   valueForKeyPath,
   setValueForKeyPath,
   replaceAll,
-} from "typed-json-transform/esm";
+} from "typed-json-transform";
 
 import { versions, names } from "./table";
 import { lengths } from "./multihash";

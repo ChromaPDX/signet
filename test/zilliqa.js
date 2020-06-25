@@ -4,7 +4,7 @@ import { assert } from 'chai';
 // const schnorr = require('../src/bip-schnorr/src');
 
 import { fixtures } from '../fixtures/curve';
-import { getWallet, verify, sign, Signature } from '../src/zilliqa';
+import { getWallet, verify, sign, Signature } from '../esm/zilliqa';
 
 describe('Zilliqa', () => {
     it('generates a privateKey of 32 bytes', () => {

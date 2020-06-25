@@ -3,12 +3,12 @@ const schnorr = require('bip-schnorr');
 const convert = schnorr.convert;
 import { assert } from 'chai';
 
-import { extractPubkey } from '../src/schnorr';
+import { extractPubkey } from '../esm/schnorr';
 
 import { fixtures } from "../fixtures/curve";
 
 describe('Schnorr', () => {
-    let createdSignature: any;
+    let createdSignature;
     const privateKey = BigInteger.fromHex(fixtures.privateKey);
     it('privateKey is 32 bytes', () => {
         const buffer = Buffer.from('B7E151628AED2A6ABF7158809CF4F3C762E7160F38B4DA56A784D9045190CFEF', 'hex');

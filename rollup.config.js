@@ -17,6 +17,7 @@ export default {
     json(),
     commonjs({
       include: [
+        "node_modules/typed-json-transform/dist/index.js",
         "node_modules/cbor/lib/cbor.js",
         "node_modules/varint/index.js",
         "node_modules/js-sha3/src/sha3.js",
