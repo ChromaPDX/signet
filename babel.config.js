@@ -11,5 +11,6 @@ module.exports = (api) => {
     ],
   ];
 
-  return { presets };
+  const plugins = ["istanbul"];
+  return { presets, plugins };
 };
