@@ -2,7 +2,7 @@
   "include": ["src/**/*.ts"],
   "compilerOptions": {
     "rootDir": "src",
-    "outDir": "dist",
+    "outDir": "esm",
     "declaration": true,
     "allowSyntheticDefaultImports": true,
     "baseUrl": ".",
@@ -15,12 +15,12 @@
     "preserveConstEnums": true,
     // "importHelpers": true,
     "lib": ["esnext", "dom"],
-    "module": "commonjs",
+    "module": "ESNext",
     "moduleResolution": "node",
     "sourceMap": true,
     "resolveJsonModule": true,
     // "noUnusedLocals": true,
     // "strict": true,
-    "target": "es5"
+    "target": "ESNext"
   }
 }

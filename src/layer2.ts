@@ -22,7 +22,7 @@ export const decode = (buffer: Buffer) => {
   }
   throw new Error(
     `${
-      codecs.length
+    codecs.length
     } codecs parsed, hit end of buffer with unterminated codec or bytes: ${buffer.toString(
       "hex"
     )}`

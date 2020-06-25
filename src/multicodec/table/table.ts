@@ -1,9 +1,7 @@
-import { clone } from "typed-json-transform";
+import { clone, keyPaths, setValueForKeyPath, replaceAll } from "typed-json-transform/esm";
 import { versions as multiHash } from "./multihash";
 import { serialization } from "./serialization";
 import { containers } from "./signet";
-
-import { keyPaths, setValueForKeyPath, replaceAll } from "typed-json-transform";
 
 export const versions = {
   multiHash,

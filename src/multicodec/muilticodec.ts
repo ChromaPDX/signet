@@ -1,6 +1,6 @@
-import { equal as assertEqual } from "assert";
+// import { equal as assertEqual } from "assert";
 import { VarInt, join as joinVarInts, shiftVarInt } from "../varint";
-import { check, contains, map, stringify } from "typed-json-transform";
+import { check, contains, map, stringify, isEqual } from "typed-json-transform/esm";
 import * as encode from "./encode";
 import * as decode from "./decode";
 import { arrayBufferToBuffer } from './util';
@@ -123,11 +123,10 @@ export class MultiCodec {
         }
         const varData = data.slice(0, varLength.value);
         this.variable = MultiCodec.FromBuffer(varData);
-        assertEqual(
-          this.variable.toBuffer().length,
-          varLength.value,
-          `${this.variable.length} != ${varLength.value}`
-        );
+        if (this.variable.toBuffer().length !=
+          varLength.value) {
+          throw new Error(`${this.variable.length} != ${varLength.value}`);
+        }
         data = data.slice(varLength.value);
         break;
       }

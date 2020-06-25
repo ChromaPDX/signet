@@ -1,12 +1,20 @@
-import {
+import * as zilliqa from '@zilliqa-js/crypto';
+
+import { Signature } from '@zilliqa-js/crypto';
+
+const {
     getPubKeyFromPrivateKey,
     getAddressFromPublicKey,
     compressPublicKey,
-    Signature,
     schnorr
-} from '@zilliqa-js/crypto';
+} = zilliqa;
 
 export { Signature };
+
+export const getPublicKey = (key?: string) => {
+    const pub = getPubKeyFromPrivateKey(key);
+    return compressPublicKey(pub);
+}
 
 export const getWallet = (key?: string) => {
     if (!key) key = schnorr.generatePrivateKey()

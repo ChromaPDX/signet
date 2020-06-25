@@ -4,3 +4,6 @@ node_modules
 coverage/
 /dist
 .vscode
+/tsconfig.tsbuildinfo
+/index.js
+/esm
