@@ -3463,10 +3463,10 @@ type-fest@^0.8.0:
   resolved "https://registry.yarnpkg.com/type-fest/-/type-fest-0.8.1.tgz#09e249ebde851d3b1e48d27c105444667f17b83d"
   integrity sha512-4dbzIzqvjtgiM5rw1k5rEHtBANKmdudhGyBEajN01fEyhaAIhsoKNy6y7+IN93IfpFtwY9iqi7kD+xwKhQsNJA==
 
-typed-json-transform@^0.25:
-  version "0.25.7"
-  resolved "https://registry.yarnpkg.com/typed-json-transform/-/typed-json-transform-0.25.7.tgz#dd08069f44de0cc0c590c771f653cc2d47a25449"
-  integrity sha512-fpbRKjQT0csLSLKZNOnnm3H8qM6EQlphyzBAWp1BIrkBCbOujxh610/lXhhKSi0R3R8y4WK+AD+2l7J1X4cgVg==
+typed-json-transform@^0.26.6:
+  version "0.26.6"
+  resolved "https://registry.yarnpkg.com/typed-json-transform/-/typed-json-transform-0.26.6.tgz#e8f8188b0fe1472907e310682964288bffd4734e"
+  integrity sha512-8CoJUh3Rx9fi/BA7uZ1X3eHolHS/snYVCEUBvoROkb2alqKlhp8UuzadC44uSbAoExKWInQibUQHRI0cSYvQKw==
 
 typedarray-to-buffer@^3.1.5:
   version "3.1.5"
