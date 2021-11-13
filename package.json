@@ -1,6 +1,6 @@
 {
   "name": "@chromapdx/signet",
-  "version": "0.2.5",
+  "version": "0.3.0",
   "description": "A specification for open provenance; a suite of tools for best practice.",
   "author": "Leif Shackelford <structuresound@gmail.com>",
   "license": "MIT",
@@ -14,8 +14,8 @@
     "travis": "npm run build && npm run cover"
   },
   "devDependencies": {
-    "@zilliqa-js/crypto": "^0.11.0",
-    "cbor": "^5.0",
+    "@zilliqa-js/crypto": "^3.3.3",
+    "cbor": "^8.1",
     "js-sha3": "^0.8",
     "multicodec": "^1.0",
     "protobufjs": "^6.9",
@@ -31,7 +31,7 @@
     "@rollup/plugin-node-resolve": "^8.1.0",
     "@rollup/plugin-typescript": "^5.0.0",
     "@stablelib/hmac-drbg": "^1.0",
-    "@types/cbor": "^5.0",
+    "@types/cbor": "^6.0",
     "@types/chai": "^4.2",
     "@types/ecurve": "^1.0",
     "@types/mocha": "^7",
@@ -47,9 +47,7 @@
     "tslib": "^1.11",
     "typescript": "^3.8"
   },
-  "resolutions": {
-    "scrypt.js": "0.3.0"
-  },
+  "unusedDependencies": {},
   "nyc": {
     "extends": "@istanbuljs/nyc-config-babel",
     "reporter": [
