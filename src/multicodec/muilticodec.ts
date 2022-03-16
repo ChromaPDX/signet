@@ -7,6 +7,7 @@ import * as decode from "./decode";
 import { arrayBufferToBuffer } from './util';
 import { versions, allMultiHash, nameForVersion, lengthForVersion } from "./table";
 import { sha256 } from '../hash';
+import { prepare as prepareDagPb, encode as encodeDagPb } from '@ipld/dag-pb'
 
 export const variableVersions = map(versions.serialization, (v, k) => v);
 
@@ -47,12 +48,15 @@ export class MultiCodec {
   static Auto = (o: any, options?: AutoOptions) =>
     MultiCodec.FromObject(o, options || autoDefaults);
 
-  static Cid = (o: any, base?: string) => {
-    const mc = MultiCodec.FromObject(o, {
-      serializationType: "json",
-    })
-    // console.log('toCid', mc.version.value, mc.toObject(), 'from', o)
-    return mc.toCid(base || 'base64', versions.serialization.json);
+  static Cid = (o: any, options: { base?: string, version?: number, serializationType?: string }) => {
+    if (options?.version === 0) {
+      const buffer = Buffer.from(encodeDagPb(prepareDagPb(o)));
+      const mc = MultiCodec.FromVersion(versions.serialization["dag-pb"], buffer);
+      return mc.toCid(options.version);
+    }
+    const mc = MultiCodec.FromObject(o, options);
+    const explicitVersion = versions.serialization[options.serializationType];
+    return mc.toCid(options.version, explicitVersion || versions.serialization.cbor, options.base || 'base64');
   }
 
   static FromObject = (o: any, auto?: AutoOptions): MultiCodec => {
@@ -62,6 +66,7 @@ export class MultiCodec {
       return MultiCodec.FromVersion(o.kind, o.value, auto);
     } else if (auto && auto.serializationType) {
       const version = versions.serialization[auto.serializationType];
+
       return MultiCodec.FromVersion(version, o, auto);
     } else {
       throw new Error(
@@ -133,7 +138,7 @@ export class MultiCodec {
         const varData = data.slice(0, varLength.value);
         this.variable = MultiCodec.FromBuffer(varData);
         if (this.variable.toBuffer().length != varLength.value) {
-          throw new Error(`${this.variable.length} != ${varLength.value}`);
+          throw new Error(`variable has wrong length ${this.variable.length()} != ${varLength.value}`);
         }
         data = data.slice(varLength.value);
         break;
@@ -158,7 +163,6 @@ export class MultiCodec {
         break;
       }
       default: {
-
         const codecLength = allMultiHash[this.version.value];
         if (codecLength) {
           // console.log('version', this.version.value, 'load:', data, 'into', codecLength, 'bytes');
@@ -191,6 +195,10 @@ export class MultiCodec {
         this.body = encode.cbor(value);
         break;
       }
+      case versions.serialization["dag-pb"]: {
+        this.body = Buffer.from(encode.dagPb(value));
+        break;
+      }
       case versions.containers.list: {
         const list = value.map((o) => MultiCodec.FromObject(o, auto));
         this.headers = [new VarInt(list.length)];
@@ -221,6 +229,9 @@ export class MultiCodec {
       }
       case versions.serialization.json: {
         return decode.json(this.body);
+      }
+      case versions.serialization["dag-pb"]: {
+        return decode.dagPb(this.body);
       }
       case versions.containers.tuple: {
         const map = new Map();
@@ -273,31 +284,48 @@ export class MultiCodec {
     }
   };
 
-  toCid = (base: string | number, contentType?: number, version = 0x01) => {
+  toCid = (version: number, contentType: number = versions.serialization["dag-pb"], base: string | number = 'base58') => {
     let b: Buffer;
-    if (version === 0) {
-      b = this.toBuffer();
-    } else {
-      const cidVersionHeader = new VarInt(version);
-      const multiHashLength = allMultiHash[this.version.value]
-      if (multiHashLength) {
-        if (!contentType) {
-          throw new Error("converting simple hash to CID, please specify a content type that represents the payload (json, cbor, etc)")
+    const cidVersionHeader = new VarInt(version);
+    const multiHashLength = allMultiHash[this.version.value];
+    if (multiHashLength) {
+      if (!contentType) {
+        throw new Error("converting simple hash to CID, please specify a content type that represents the payload (json, cbor, etc)")
+      }
+      const vi = new VarInt(contentType);
+      if (version === 0) {
+        if (contentType !== versions.serialization["dag-pb"]) {
+          throw new Error("content type must be dag-pb for cidv0")
         }
+        // console.log('version0 has implicit dag-pb')
+        b = this.toBuffer();
+      } else {
         // console.log('create CID for hash type', contentType.toString());
-        const vi = new VarInt(contentType);
         b = Buffer.concat([cidVersionHeader.data(), vi.data(), this.toBuffer()])
+      }
+    } else {
+      // console.log('create cid v' + version, 'from serialized type', this.version.toString());
+      const hash = sha256(this.body);
+      // console.log('checksum', hash.toString('hex'), this.toObject());
+      const multiHash = MultiCodec.FromVersion(versions.multiHash.sha2[256], hash);
+      const mcb = multiHash.toBuffer();
+      // console.log('create CID for variable type', contentHeader.toString(), 'digest',)
+      if (version === 0) {
+        b = mcb;
       } else {
         const contentHeader = this.version;
-        const hash = sha256(this.body);
-        // console.log('checksum', hash.toString('hex'), this.toObject());
-        const multiHash = MultiCodec.FromVersion(versions.multiHash.sha2[256], hash);
-        const mcb = multiHash.toBuffer();
-        // console.log('create CID for variable type', contentHeader.toString(), 'digest',)
         b = Buffer.concat([cidVersionHeader.data(), contentHeader.data(), mcb])
       }
     }
+
+    if (version === 0) {
+      return bs58.encode(b);
+    }
     switch (base) {
+      case 16:
+      case 'hex': {
+        return 'f' + b.toString('hex')
+      }
       case 64:
       case 'base64': {
         return 'm' + b.toString('base64')

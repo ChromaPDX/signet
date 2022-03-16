@@ -1,7 +1,13 @@
 import { decode as cbor } from "cbor";
 import { stringify } from "typed-json-transform";
+import * as dagPB from '@ipld/dag-pb'
 
 export { cbor }
+
+export const dagPb = (b) => {
+    const decoded = dagPB.decode(b)
+    return decoded;
+}
 
 export const json = (b) => {
     try {
