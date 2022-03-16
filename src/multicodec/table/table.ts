@@ -1,5 +1,5 @@
 import { clone, keyPaths, setValueForKeyPath, replaceAll } from "typed-json-transform";
-import { versions as multiHash } from "./multihash";
+import { versions as multiHash, allVersions as allMultiHash } from "./multihash";
 import { serialization } from "./serialization";
 import { containers } from "./signet";
 
@@ -9,6 +9,7 @@ export const versions = {
   containers,
 };
 
+export { allMultiHash }
 const writePathToVal = (o) => {
   keyPaths(o).forEach((kp) => {
     setValueForKeyPath(replaceAll(kp, ".", "-"), kp, o);

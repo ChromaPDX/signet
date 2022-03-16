@@ -13,6 +13,7 @@ export const versions = {
   },
 };
 
+
 export const lengths = {
   identity: 0,
   sha1: 20,
@@ -27,3 +28,20 @@ export const lengths = {
     512: 64,
   },
 };
+
+const parseVersions = (versions, lengths, flat): { [x: string]: number } => {
+  for (const k of Object.keys(versions)) {
+    const version = versions[k];
+    const length = lengths[k];
+    if (typeof version === 'object') {
+      parseVersions(version, length, flat)
+    } else if (version !== undefined) {
+      flat[version] = length;
+    } else {
+      throw new Error('undefined version?' + version + 'in: ' + versions)
+    }
+  }
+  return flat;
+}
+
+export const allVersions = parseVersions(versions, lengths, {});

@@ -1,13 +1,14 @@
 // import { equal as assertEqual } from "assert";
 import { VarInt, join as joinVarInts, shiftVarInt } from "../varint";
-import { check, contains, map, stringify, isEqual } from "typed-json-transform";
+import { check, contains, map } from "typed-json-transform";
+import * as bs58 from 'bs58';
 import * as encode from "./encode";
 import * as decode from "./decode";
 import { arrayBufferToBuffer } from './util';
-import { versions, nameForVersion, lengthForVersion } from "./table";
+import { versions, allMultiHash, nameForVersion, lengthForVersion } from "./table";
+import { sha256 } from '../hash';
 
 export const variableVersions = map(versions.serialization, (v, k) => v);
-export const implicitLengthVersions = map(versions.multiHash, (v, k) => v);
 
 interface AutoOptions {
   arrayToList?: boolean;
@@ -46,14 +47,22 @@ export class MultiCodec {
   static Auto = (o: any, options?: AutoOptions) =>
     MultiCodec.FromObject(o, options || autoDefaults);
 
+  static Cid = (o: any, base?: string) => {
+    const mc = MultiCodec.FromObject(o, {
+      serializationType: "json",
+    })
+    // console.log('toCid', mc.version.value, mc.toObject(), 'from', o)
+    return mc.toCid(base || 'base64', versions.serialization.json);
+  }
+
   static FromObject = (o: any, auto?: AutoOptions): MultiCodec => {
     if (auto && auto.arrayToList && check(o, Array))
       return MultiCodec.FromArray(o, auto);
     if (o.kind && o.value) {
       return MultiCodec.FromVersion(o.kind, o.value, auto);
     } else if (auto && auto.serializationType) {
-      const kind = versions.serialization[auto.serializationType];
-      return MultiCodec.FromVersion(kind, o, auto);
+      const version = versions.serialization[auto.serializationType];
+      return MultiCodec.FromVersion(version, o, auto);
     } else {
       throw new Error(
         "no kind or value for MultiCodec, also didn't opt into default as json or other default"
@@ -123,8 +132,7 @@ export class MultiCodec {
         }
         const varData = data.slice(0, varLength.value);
         this.variable = MultiCodec.FromBuffer(varData);
-        if (this.variable.toBuffer().length !=
-          varLength.value) {
+        if (this.variable.toBuffer().length != varLength.value) {
           throw new Error(`${this.variable.length} != ${varLength.value}`);
         }
         data = data.slice(varLength.value);
@@ -150,14 +158,20 @@ export class MultiCodec {
         break;
       }
       default: {
-        const useCodecLength = contains(
-          implicitLengthVersions,
-          this.version.value
-        );
-        if (useCodecLength) {
-          this.body = data.slice(0, lengthForVersion(this.version.value));
+
+        const codecLength = allMultiHash[this.version.value];
+        if (codecLength) {
+          // console.log('version', this.version.value, 'load:', data, 'into', codecLength, 'bytes');
+          const lengthHeader = new VarInt(codecLength);
+          // console.log('version', this.version.value, 'has length', codecLength, 'aka', lengthHeader.data().toString('hex'));
+          this.headers = [lengthHeader];
+          this.body = data.slice(0, codecLength);
+        } else {
+          // const lengthHeader = new VarInt(data.length);
+          // this.headers = [lengthHeader];
+          // console.log(`codec 0x${this.version.toHexString()} has no specified length, omit header`);
+          this.body = data;
         }
-        this.body = data;
         // console.log('signet data length', this.body.length)
         break;
       }
@@ -170,6 +184,7 @@ export class MultiCodec {
       // serialization
       case versions.serialization.json: {
         this.body = encode.json(value);
+        // console.log('loadObject: encode json', value, 'to', this.body.length, 'bytes', this.body);
         break;
       }
       case versions.serialization.cbor: {
@@ -203,6 +218,9 @@ export class MultiCodec {
       }
       case versions.serialization.cbor: {
         return decode.cbor(this.body);
+      }
+      case versions.serialization.json: {
+        return decode.json(this.body);
       }
       case versions.containers.tuple: {
         const map = new Map();
@@ -246,6 +264,7 @@ export class MultiCodec {
             ...this.headers.map((h) => h.data()),
             this.body,
           ]);
+          return buf;
           // console.log('mc [', this.version.data().length, this.headers.length, this.body.length, ']');
         }
         // console.log('mc [', this.version.data().length, this.body.length, ']');
@@ -253,6 +272,45 @@ export class MultiCodec {
       }
     }
   };
+
+  toCid = (base: string | number, contentType?: number, version = 0x01) => {
+    let b: Buffer;
+    if (version === 0) {
+      b = this.toBuffer();
+    } else {
+      const cidVersionHeader = new VarInt(version);
+      const multiHashLength = allMultiHash[this.version.value]
+      if (multiHashLength) {
+        if (!contentType) {
+          throw new Error("converting simple hash to CID, please specify a content type that represents the payload (json, cbor, etc)")
+        }
+        // console.log('create CID for hash type', contentType.toString());
+        const vi = new VarInt(contentType);
+        b = Buffer.concat([cidVersionHeader.data(), vi.data(), this.toBuffer()])
+      } else {
+        const contentHeader = this.version;
+        const hash = sha256(this.body);
+        // console.log('checksum', hash.toString('hex'), this.toObject());
+        const multiHash = MultiCodec.FromVersion(versions.multiHash.sha2[256], hash);
+        const mcb = multiHash.toBuffer();
+        // console.log('create CID for variable type', contentHeader.toString(), 'digest',)
+        b = Buffer.concat([cidVersionHeader.data(), contentHeader.data(), mcb])
+      }
+    }
+    switch (base) {
+      case 64:
+      case 'base64': {
+        return 'm' + b.toString('base64')
+      }
+      case 58:
+      case 'base58':
+      case 'base58btc': {
+        return 'z' + bs58.encode(b);
+      }
+      default:
+        throw new Error("unknown base");
+    }
+  }
 }
 
 export const auto = MultiCodec.Auto;

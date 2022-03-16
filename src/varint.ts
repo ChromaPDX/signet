@@ -27,7 +27,7 @@ export class VarInt {
   };
 
   toHexString = () => this.bytes.toString("hex");
-
+  toString = () => '0x' + this.value.toString(16);
   length = () => this.bytes.length;
   data = () => this.bytes;
 
