@@ -63,7 +63,7 @@ export class MultiCodec {
   static FromArray = (a, auto?: AutoOptions) =>
     MultiCodec.FromVersion(versions.containers.list, a, auto);
 
-  static FromVersion = (version: number, value: any, auto?: AutoOptions) => {
+  static FromVersion = (version: number, value: any, auto?: AutoOptions): MultiCodec => {
     if (auto?.wrapVariables && contains(variableVersions, version)) {
       return MultiCodec.FromVersion(
         versions.containers.variable,
